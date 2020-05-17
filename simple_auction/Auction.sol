@@ -11,7 +11,7 @@ contract Auction {
     address bestBuyer;
     uint bestBuyerBid;
     
-    mapping(address => uint) public bidMap; //TODO isto nao pode ser public (temporário)
+    mapping(address => uint) bidMap;
     address payable[] bidders;
     uint[] bids;
     
@@ -24,7 +24,7 @@ contract Auction {
         available = true;
     }
     
-    function sell() payable public onlySeller() returns(address){
+    function sell() public onlySeller() returns(address){
         //selling
         seller.transfer(bestBuyerBid);
         
@@ -38,8 +38,7 @@ contract Auction {
         available = false;
     }
     
-    function bid(uint myBid) payable public{
-        
+    function bid() payable public{
         
         if(!available){
             revert("This auction is no longer available");
@@ -47,19 +46,19 @@ contract Auction {
         if(msg.sender == seller){
             revert("The seller may not bid in his own auction.");
         }
-        if(myBid < startingBid){
+        if(msg.value < startingBid){
             revert("The bid is lower than the starting bid.");
         }
         
         //updating best bid
-        bids.push(myBid);
+        bids.push(msg.value);
         bidders.push(msg.sender);
         if(bestBuyerBid < msg.value){
-            bestBuyerBid = myBid;
+            bestBuyerBid = msg.value;
             bestBuyer = msg.sender;
         }
         //adding to the bid map
-        bidMap[msg.sender] = myBid;
+        bidMap[msg.sender] = msg.value;
         
     }
     
