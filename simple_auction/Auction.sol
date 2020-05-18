@@ -33,9 +33,10 @@ contract Auction {
             if(bidders[i] != bestBuyer){
                 bidders[i].transfer( bids[i]);
             }
-            bids[i] = 0;
+            //bids[i] = 0;
         }
         available = false;
+        return bestBuyer;
     }
     
     function bid() payable public{
