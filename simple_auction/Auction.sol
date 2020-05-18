@@ -40,16 +40,9 @@ contract Auction {
     }
     
     function bid() payable public{
-        
-        if(!available){
-            revert("This auction is no longer available");
-        }
-        if(msg.sender == seller){
-            revert("The seller may not bid in his own auction.");
-        }
-        if(msg.value < startingBid){
-            revert("The bid is lower than the starting bid.");
-        }
+        require(available, "This auction is no longer available.");
+        require(msg.sender != seller, "The seller may not bid in his own auction.");
+        require(msg.value >= startingBid, "The bid is lower than the starting bid.");
         
         //updating best bid
         bids.push(msg.value);
@@ -64,9 +57,7 @@ contract Auction {
     }
     
     function myBid() public view returns(uint){
-        if(msg.sender == seller){
-            revert("The seller may not bid in his own auction.");
-        }
+        require(msg.sender != seller, "The seller may not bid in his own auction.");
         return bidMap[msg.sender];
     }
     
@@ -92,7 +83,7 @@ contract Auction {
     }
     
     modifier onlySeller(){
-        require(msg.sender == seller);
+        require(msg.sender == seller, "Only the seller may use this function.");
         _;
     }
 
